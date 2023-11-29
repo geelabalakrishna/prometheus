@@ -1,0 +1,57 @@
+ 1  cd ~
+    2  pwd
+    3  sudo groupadd --system prometheus
+    4  sudo useradd -s /sbin/nologin --system -g prometheus prometheus
+    5  sudo mkdir /etc/prometheus
+    6  sudo mkdir /var/lib/prometheus
+    7  wget https://github.com/prometheus/prometheus/releases/download/v2.43.0/prometheus-2.43.0.linux-amd64.tar.gz
+    8  tar vxf prometheus*.tar.gz
+    9  cd prometheus*/
+   10  sudo mv prometheus /usr/local/bin
+   11  sudo mv promtool /usr/local/bin
+   12  sudo chown prometheus:prometheus /usr/local/bin/prometheus
+   13  sudo chown prometheus:prometheus /usr/local/bin/promtool
+   14  sudo mv prometheus /usr/local/bin
+   15  sudo mv promtool /usr/local/bin
+   16  sudo chown prometheus:prometheus /usr/local/bin/prometheus
+   17  sudo chown prometheus:prometheus /usr/local/bin/promtool
+   18  sudo mv consoles /etc/prometheus
+   19  sudo mv console_libraries /etc/prometheus
+   20  sudo mv prometheus.yml /etc/prometheus
+   21  sudo chown prometheus:prometheus /etc/prometheus
+   22  sudo chown -R prometheus:prometheus /etc/prometheus/consoles
+   23  sudo chown -R prometheus:prometheus /etc/prometheus/console_libraries
+   24  sudo chown -R prometheus:prometheus /var/lib/prometheus
+   25  sudo nano /etc/prometheus/prometheus.yml
+   26  sudo nano /etc/systemd/system/prometheus.service
+
+
+[Unit]
+Description=Prometheus
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=prometheus
+Group=prometheus
+Type=simple
+ExecStart=/usr/local/bin/prometheus \
+    --config.file /etc/prometheus/prometheus.yml \
+    --storage.tsdb.path /var/lib/prometheus/ \
+    --web.console.templates=/etc/prometheus/consoles \
+    --web.console.libraries=/etc/prometheus/console_libraries
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+
+
+
+   27  cat /etc/systemd/system/prometheus.service
+   28  sudo systemctl daemon-reload
+   29  sudo systemctl enable prometheus
+   30  sudo systemctl start prometheus
+   31  sudo systemctl enable prometheus
+   32  sudo systemctl status prometheus
